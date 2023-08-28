@@ -1,19 +1,19 @@
-function adjMatrix = CVG(A)
+function adjMatrix = CVG(Time_Series)
 
-long = length(A);
-B = zeros(long);
+Long = length(Time_Series);
+index = zeros(Long);
 
-for i = 1:long - 1
+for i = 1:Long - 1
 
-    for j = i + 2:long
-        if numel(find((A(j) - A(i)) / (j - i) < ((A(i + 1:j - 1) - A(i)) ./ ([1:j - i - 1]))) == 1) == (j - i - 1)
-            B(i, j) = 1;
+    for j = i + 2:Long
+        if numel(find((Time_Series(j) - Time_Series(i)) / (j - i) < ((Time_Series(i + 1:j - 1) - Time_Series(i)) ./ ([1:j - i - 1]))) == 1) == (j - i - 1)
+            index(i, j) = 1;
 
         end
     end
 
 end
 
-B = B + B';
+index = index + index';
 
-adjMatrix = B;
+adjMatrix = index;

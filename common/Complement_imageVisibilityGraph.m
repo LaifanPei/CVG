@@ -1,73 +1,45 @@
-% ****************************************************************************
-% IMAGE VISIBILITY GRAPH 
-% 
-% This code can be redistributed and/or modified under the terms of the 
-% GNU General Public License as published by the Free Software Foundation, 
-% either version 3 of the License, or (at your option) any later version.
-%  
-% This program is distributed by the author in the hope that it will be 
-% useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-%  
-% 
-% Please cite:
-%
-% [1] Visibility graphs of random scalar fields and spatial data
-%     Lucas Lacasa and Jacopo Iacovacci
-%     Physical Review E 96(1) (2017)
-% 
-% [2] Visibility graphs for image processing
-%     Jacopo Iacovacci and Lucas Lacasa
-%     Transactions on Pattern Analysis and Machine Intelligence  (2019)
-% 
-%
-% (c) Jacopo Iacovacci (mriacovacci@hotmail.it)
-% *************************************************************************
-
-
-
-function Edge_list=imageVisibilityGraph(I,criterion,lattice)
+function Edge_list=imageVisibilityGraph(Image,Criterion,Lattice)
 
 % ****************************************************************************
 % This code takes in input a square matrix and extract the corresponding 
 % image visibility graph.
 %
 % Input
-% I : input matrix (double/uint8 matrix of size NxN);
+% Image : input matrix (double/uint8 matrix of size NxN);
 %
-% criterion : algorithm used to extract patches; choose 'horizontal' or 'natural'.   
+% Criterion : algorithm used to extract patches; choose 'horizontal' or 'natural'.   
 %
-% lattice : to include in the output graph the lattice (set TRUE) or not (set FALSE). 
+% Lattice : to include in the output graph the lattice (set TRUE) or not (set FALSE). 
 %
 % Output
 % Edge_list : image visibility graph in the form of an edge list.
 %*****************************************************************************
 
-n_rows=size(I,1);
-n_columns=size(I,2);
+n_rows=size(Image,1);
+n_columns=size(Image,2);
 
 if (n_rows~=n_columns)
     error('Input image must be square')
 end
 
-if (((~strcmp(criterion,'horizontal'))+(~strcmp(criterion,'natural')))>1)
+if (((~strcmp(Criterion,'horizontal'))+(~strcmp(Criterion,'natural')))>1)
     error('Criterion string must be <natural> or <horizontal>')
 end
 
-if (~islogical(lattice))
+if (~islogical(Lattice))
     error('lattice must be logical: TRUE to save lattice structure, FALSE otherwise')
 end
 
 
-I=double(I);
+Image=double(Image);
 edge_list_index=0;
 
-if (strcmp(criterion,'horizontal'))
+if (strcmp(Criterion,'horizontal'))
 
 for i=1:n_rows
     for j=1:n_columns        
         %%%%%%  lattice
-        if(lattice) 
+        if(Lattice) 
         if (j<n_columns)            
             edge_list_index=edge_list_index+1;            
             ei(edge_list_index)=n_columns*(i-1)+j;
@@ -95,13 +67,13 @@ for i=1:n_rows
             for c=j+2:n_columns
                 cond=1;
                 for l=k:c-1
-                    if((I(i,l)>=I(i,j))||(I(i,l)>=I(i,c)))
+                    if((Image(i,l)>=Image(i,j))||(Image(i,l)>=Image(i,c)))
                         cond=0;
                         k=l;
                         break
                     end
                 end
-                if(I(i,l)>=I(i,j))
+                if(Image(i,l)>=Image(i,j))
                     break
                 end
                 if(cond==1)
@@ -123,14 +95,14 @@ for i=1:n_rows
                 li=ki-1;
                 for lj=kj:c-1
                     li=li+1;
-                    if((I(li,lj)>=I(i,j))||(I(li,lj)>=I(r,c)))
+                    if((Image(li,lj)>=Image(i,j))||(Image(li,lj)>=Image(r,c)))
                         cond=0;
                         ki=li;
                         kj=lj;
                         break
                     end
                 end
-                if(I(li,lj)>=I(i,j))
+                if(Image(li,lj)>=Image(i,j))
                     break
                 end
                 if(cond==1)
@@ -146,13 +118,13 @@ for i=1:n_rows
             for r=i+2:n_rows
                 cond=1;
                 for l=k:r-1
-                    if((I(l,j)>=I(i,j))||(I(l,j)>=I(r,j)))
+                    if((Image(l,j)>=Image(i,j))||(Image(l,j)>=Image(r,j)))
                         cond=0;
                         k=l;
                         break
                     end
                 end
-                if(I(l,j)>=I(i,j))
+                if(Image(l,j)>=Image(i,j))
                     break
                 end
                 
@@ -175,7 +147,7 @@ for i=1:n_rows
                 lj=kj+1;
                 for li=ki:r-1
                     lj=lj-1;
-                    if((I(li,lj)>=I(i,j))||(I(li,lj)>=I(r,c)))
+                    if((Image(li,lj)>=Image(i,j))||(Image(li,lj)>=Image(r,c)))
                         cond=0;
                         ki=li;
                         kj=lj;
@@ -183,7 +155,7 @@ for i=1:n_rows
                     end
                 end
                 
-                if(I(li,lj)>=I(i,j))
+                if(Image(li,lj)>=Image(i,j))
                     break
                 end
                 if(cond==1)
@@ -199,13 +171,13 @@ end
 end
 
 
-if (strcmp(criterion,'natural'))
+if (strcmp(Criterion,'natural'))
     
 for i=1:n_rows    
     for j=1:n_columns
          
         %%%%%% lattice
-        if(~lattice) 
+        if(~Lattice) 
         if (j<n_columns)            
             edge_list_index=edge_list_index+1;            
             ei(edge_list_index)=n_columns*(i-1)+j;
@@ -232,7 +204,7 @@ for i=1:n_rows
             for c=j+2:n_columns
                 cond=1;
                 for l=j+1:c-1                    
-                    if(I(i,l)>=I(i,j)+(I(i,c)-I(i,j))*(l-j)/(c-j))
+                    if(Image(i,l)>=Image(i,j)+(Image(i,c)-Image(i,j))*(l-j)/(c-j))
                         cond=0;
                         break;      
                     end                   
@@ -253,7 +225,7 @@ for i=1:n_rows
                 cond=1;
                 li=i+1;
                 for lj=j+1:c-1
-                    if(I(li,lj)>=I(i,j)+(I(r,c)-I(i,j))*(lj-j)/(c-j))
+                    if(Image(li,lj)>=Image(i,j)+(Image(r,c)-Image(i,j))*(lj-j)/(c-j))
                         cond=0;
                         break
                     end
@@ -272,7 +244,7 @@ for i=1:n_rows
             for r=i+2:n_rows
                 cond=1;
                 for l=i+1:r-1
-                    if(I(l,j)>=I(i,j)+(I(r,j)-I(i,j))*(l-i)/(r-i))
+                    if(Image(l,j)>=Image(i,j)+(Image(r,j)-Image(i,j))*(l-i)/(r-i))
                         cond=0;
                         break
                     end                    
@@ -292,7 +264,7 @@ for i=1:n_rows
                 cond=1;
                 lj=j-1;
                 for li=i+1:r-1
-                    if(I(li,lj)>=I(i,j)+(I(r,c)-I(i,j))*(lj-j)/(c-j))    
+                    if(Image(li,lj)>=Image(i,j)+(Image(r,c)-Image(i,j))*(lj-j)/(c-j))    
                         cond=0;
                         break
                     end

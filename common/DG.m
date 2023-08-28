@@ -1,5 +1,5 @@
-G = graph(adjMatrix);
-Deg_seq = degree(G);
+Graph_G = graph(adjMatrix);
+Deg_seq = degree(Graph_G);
 Pk = hist(Deg_seq, 1:1:100) ./ 2000;
 
 plot(Pk, 'k')

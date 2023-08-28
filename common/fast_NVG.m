@@ -1,4 +1,4 @@
-function [VG] = fast_NVG(signal_var, coords_var, weight, B_period)
+function [VG] = fast_NVG(signal_var, coords_var, weight, Period)
 % Implementation of natural visibility graph based on:
 % Lacasa, L., Luque, B., Ballesteros, F., Luque, J., & Nuno, J. C. (2008).
 % From time series to complex networks: The visibility graph.
@@ -42,12 +42,12 @@ elseif ischar(weight) == 0 || (strcmp(weight, 'u') + strcmp(weight, 'w')) == 0
     return;
 end
 if exist('B_period', 'var') == 0
-    B_period = 0;
-elseif isscalar(B_period) == 0 || sum(ismember([0, 1], B_period)) == 0
+    Period = 0;
+elseif isscalar(Period) == 0 || sum(ismember([0, 1], Period)) == 0
     disp('Error boundary periodicity: ''0''=no periodicity; ''1''=periodicity ')
     return;
 end
-if B_period == 1 && length(unique(diff(coords_var))) ~= 1
+if Period == 1 && length(unique(diff(coords_var))) ~= 1
     disp('Error: the vector with coordinates must be uniformly-spaced. Use NaN in the signal to account for non-uniform sampling.')
     disp('E.g.: signal_var=[1,NaN,4.2,NaN,NaN,8.4]; coords_var=[1,2,3,4,5,6]')
     return;
@@ -55,10 +55,10 @@ end
 
 %% PRE-PROCESSING
 
-if B_period == 0
+if Period == 0
     TS2map = signal_var;
     TT2map = coords_var;
-elseif B_period == 1
+elseif Period == 1
     %re-arrange the signal to account for boundary periodicity
     Nt = size(signal_var, 1);
     [~, peaks_signal_ind] = max(signal_var);
@@ -104,7 +104,7 @@ VG = sparse(source, target, weight_input, N, N);
 VG = VG + VG'; %makes adjcency matrix simmetrical
 
 %% restore the original indexing and remove duplicate links
-if B_period == 1
+if Period == 1
     % remove the link between the maximum with the auxiliary node (they are the same node)
     VG(1, end) = 0;
     VG(end, 1) = 0;
