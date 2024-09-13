@@ -14,5 +14,4 @@ Kylberg: https://www.cb.uu.se/?gustaf/texturel
 
 KTHTIPS2b: http://m6z.cn/61EkMH
 
-markdown
-   ![GitHub Logo](https://github.com/LaifanPei/CVG/blob/main/test.png)
+![GitHub Logo](https://github.com/LaifanPei/CVG/blob/main/test.png)
